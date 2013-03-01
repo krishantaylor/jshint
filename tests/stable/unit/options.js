@@ -1048,6 +1048,29 @@ exports.indentation = function (test) {
 	test.done();
 };
 
+exports.switchIndentation = function (test) {
+	var src = fs.readFileSync(__dirname + '/fixtures/swindent.js', 'utf8');
+
+	TestRun(test)
+		.test(src);
+
+	TestRun(test)
+		.test(src, { indent: 2, white: true });
+
+	TestRun(test)
+		.addError(5, "Expected 'case' to have an indentation at 5 instead at 3.")
+		.addError(6, "Expected 'x' to have an indentation at 7 instead at 5.")
+		.addError(7, "Expected 'break' to have an indentation at 7 instead at 5.")
+		.addError(8, "Expected 'case' to have an indentation at 5 instead at 3.")
+		.addError(9, "Expected 'x' to have an indentation at 7 instead at 5.")
+		.addError(10, "Expected 'break' to have an indentation at 7 instead at 5.")
+		.addError(11, "Expected 'default' to have an indentation at 5 instead at 3.")
+		.addError(12, "Expected 'x' to have an indentation at 7 instead at 5.")
+		.test(src, { indent: 2, white: true, swindent: true });
+
+	test.done();
+};
+
 /*
  * Test string relevant options
  *	 multistr	 allows multiline strings

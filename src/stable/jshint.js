@@ -127,6 +127,8 @@ var JSHINT = (function () {
 			sub         : true, // if all forms of subscript notation are tolerated
 			supernew    : true, // if `new function () { ... };` and `new Object;`
 			                    // should be tolerated
+			swindent    : true, // if all of the lines within a switch statement should be indented
+			                    // an extra level
 			trailing    : true, // if trailing whitespace rules apply
 			validthis   : true, // if 'this' inside a non-constructor function is valid.
 			                    // This is a function scoped option only.
@@ -2794,6 +2796,9 @@ var JSHINT = (function () {
 		advance("{");
 		nonadjacent(state.tokens.curr, state.tokens.next);
 		indent += state.option.indent;
+		if (state.option.swindent) {
+			indent += state.option.indent;
+		}
 		this.cases = [];
 
 		for (;;) {
@@ -2845,6 +2850,9 @@ var JSHINT = (function () {
 				advance(":");
 				break;
 			case "}":
+				if (state.option.swindent) {
+					indent -= state.option.indent;
+				}
 				indent -= state.option.indent;
 				indentation();
 				advance("}", t);
