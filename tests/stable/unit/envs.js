@@ -62,7 +62,9 @@ exports.node = function (test) {
 		"setTimeout",
 		"clearTimeout",
 		"setInterval",
-		"clearInterval"
+		"clearInterval",
+		"setImmediate",
+		"clearImmediate"
 	];
 
 	globalsImplied(test, globals);
@@ -80,12 +82,12 @@ exports.node = function (test) {
 		"console.log(__hello);",
 	];
 
-	TestRun(test).test(asGlobals, { node: true, nomen: true });
+	TestRun(test).test(asGlobals, { es3: true, node: true, nomen: true });
 	TestRun(test)
 		.addError(1, "Unexpected dangling '_' in '__dirname'.")
 		.addError(2, "Unexpected dangling '_' in '__filename'.")
 		.addError(3, "Unexpected dangling '_' in '__hello'.")
-		.test(asProps, { node: true, nomen: true });
+		.test(asProps, { es3: true, node: true, nomen: true });
 
 	// Node environment assumes `globalstrict`
 	var globalStrict = [
@@ -95,14 +97,14 @@ exports.node = function (test) {
 
 	TestRun(test)
 		.addError(1, 'Use the function form of "use strict".')
-		.test(globalStrict, { strict: true });
+		.test(globalStrict, { es3: true, strict: true });
 
 	TestRun(test)
-		.test(globalStrict, { node: true, strict: true });
+		.test(globalStrict, { es3: true, node: true, strict: true });
 
 	// Don't assume strict:true for Node environments. See bug GH-721.
 	TestRun(test)
-		.test("function test() { return; }", { node: true });
+		.test("function test() { return; }", { es3: true, node: true });
 
 	// Make sure that we can do fancy Node export
 
@@ -113,7 +115,7 @@ exports.node = function (test) {
 
 	TestRun(test)
 		.addError(1, "Read only.")
-		.test(overwrites, { node: true });
+		.test(overwrites, { es3: true, node: true });
 
 	test.done();
 };
@@ -123,7 +125,7 @@ exports.jquery = function (test) {
 	var globals = ['jQuery', "$"];
 
 	globalsImplied(test, globals);
-	globalsKnown(test, globals, { jquery: true });
+	globalsKnown(test, globals, { es3: true, jquery: true });
 
 	test.done();
 };
@@ -403,6 +405,43 @@ exports.rhino = function (test) {
 	test.done();
 };
 
+exports.shelljs = function (test) {
+	var globals = [
+		"target",
+		"echo",
+		"exit",
+		"cd",
+		"pwd",
+		"ls",
+		"find",
+		"cp",
+		"rm",
+		"mv",
+		"mkdir",
+		"test",
+		"cat",
+		"sed",
+		"grep",
+		"which",
+		"dirs",
+		"pushd",
+		"popd",
+		"env",
+		"exec",
+		"chmod",
+		"config",
+		"error",
+		"tempdir"
+	];
+
+	globalsImplied(test, globals);
+	globalsKnown(test, globals, { shelljs: true });
+
+	test.done();
+};
+
+
+
 exports.wsh = function (test) {
 	var globals = [
 		'ActiveXObject',
@@ -464,7 +503,7 @@ exports.es5 = function (test) {
 		.addError(69, "Missing property name.")
 		.addError(75, "get/set are ES5 features.")
 		.addError(76, "get/set are ES5 features.")
-		.test(src);
+		.test(src, { es3: true });
 
 	TestRun(test)
 		.addError(36, "Setter is defined without getter.")
@@ -477,12 +516,12 @@ exports.es5 = function (test) {
 		.addError(64, "Expected a single parameter in set z function.")
 		.addError(68, "Missing property name.")
 		.addError(69, "Missing property name.")
-		.test(src, { es5: true });
+		.test(src, {  }); // es5
 
 	// Make sure that JSHint parses getters/setters as function expressions
 	// (https://github.com/jshint/jshint/issues/96)
 	src = fs.readFileSync(__dirname + "/fixtures/es5.funcexpr.js", "utf8");
-	TestRun(test).test(src, { es5: true });
+	TestRun(test).test(src, {  }); // es5
 
 	test.done();
 };
