@@ -301,6 +301,16 @@ function lint(file, results, config, data) {
 
 var exports = {
 	/**
+	 * Loads and parses a configuration file.
+	 *
+	 * @param {string} fp a path to the config file
+	 * @returns {object} config object
+	 */
+	loadConfig: function (fp) {
+		return loadConfig(fp);
+	},
+
+	/**
 	 * Gathers all files that need to be linted
 	 *
 	 * @param {object} post-processed options from 'interpret':
